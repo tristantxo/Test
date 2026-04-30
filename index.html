@@ -21,80 +21,56 @@
     --muted: #888;
     --faint: #555;
     --green: #4ade80;
-    --green-bg: rgba(74,222,128,0.12);
-    --green-dim: rgba(74,222,128,0.06);
     --blue: #60a5fa;
     --radius: 14px;
     --radius-sm: 8px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  
-  html, body { 
-    height: 100%; 
-    background: var(--bg); 
-    color: var(--text); 
-    font-family: 'DM Sans', sans-serif; 
-    overflow: hidden; 
-    overscroll-behavior-y: contain; 
-  }
-  
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; overflow: hidden; overscroll-behavior-y: contain; }
   body { display: flex; flex-direction: column; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
-
   .topbar { padding: 18px 20px 12px; flex-shrink: 0; }
   .topbar-row { display: flex; justify-content: space-between; align-items: flex-start; }
   .app-title { font-size: 26px; font-weight: 600; }
   .overall-chip { background: var(--surface2); border: 1px solid var(--border2); border-radius: 20px; padding: 6px 12px; font-size: 12px; font-family: 'DM Mono', monospace; text-align: right; }
   .overall-chip span { color: var(--green); }
-
   .tabs-wrap { flex-shrink: 0; padding: 8px 0 10px; }
   .tabs { display: flex; gap: 6px; padding: 0 20px; overflow-x: auto; scrollbar-width: none; }
   .tabs::-webkit-scrollbar { display: none; }
   .tab { flex-shrink: 0; padding: 6px 13px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 12px; font-family: 'DM Mono', monospace; }
   .tab.active { background: var(--text); color: var(--bg); border-color: transparent; }
   .tab.done { border-color: rgba(74,222,128,0.3); color: var(--green); }
-
   .scroll { flex: 1; overflow-y: auto; padding: 0 16px 24px; -webkit-overflow-scrolling: touch; }
-
   .week-header { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 10px; }
   .wh-title { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
   .wh-date { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
-  
   .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 12px 0; }
   .stat { background: var(--surface2); border-radius: var(--radius-sm); padding: 10px 8px; text-align: center; }
   .stat-val { font-size: 20px; font-weight: 600; font-family: 'DM Mono', monospace; }
   .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; }
-
   .prog-track { height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
   .prog-fill { height: 100%; background: var(--green); transition: width 0.3s; }
-
-  .section-label { font-size: 10px; font-weight: 600; color: var(--faint); letter-spacing: 0.1em; text-transform: uppercase; padding: 14px 4px 6px; }
+  .section-label { font-size: 11px; font-weight: 600; color: var(--blue); letter-spacing: 0.1em; text-transform: uppercase; padding: 20px 4px 8px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
   .ex-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 6px; }
   .ex-row { display: flex; align-items: center; padding: 13px 14px; gap: 12px; }
-  
   .chk { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border2); position: relative; flex-shrink: 0; }
   .chk.on { background: var(--green); border-color: var(--green); }
   .chk.on::after { content: ''; position: absolute; left: 6px; top: 4px; width: 8px; height: 5px; border-left: 2px solid #0f0f0f; border-bottom: 2px solid #0f0f0f; transform: rotate(-45deg); }
-  
   .ex-info { flex: 1; min-width: 0; }
   .ex-name { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .ex-name.done { opacity: 0.35; text-decoration: line-through; }
-  
-  /* Editable field styles */
   .editable { border-bottom: 1px dashed var(--faint); outline: none; }
   .editable:focus { border-bottom-color: var(--blue); color: var(--blue); }
   .ex-sets { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; display: inline-block; }
   .ex-wt { text-align: right; font-family: 'DM Mono', monospace; min-width: 45px; }
-
   .nav { flex-shrink: 0; display: flex; gap: 8px; padding: 10px 16px; border-top: 1px solid var(--border); }
   .nav-btn { flex: 1; padding: 12px; border-radius: var(--radius-sm); background: var(--surface2); color: var(--text); border: none; font-family: 'DM Mono', monospace; font-size: 12px; }
-  .nav-btn:disabled { opacity: 0.3; }
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <div class="topbar-row">
-    <div><div class="app-title">Gym Plans by Tristantxo</div><div class="app-sub">2026 Schedule</div></div>
+    <div><div class="app-title">Gym Plans</div><div class="app-sub">4 Sessions / Week</div></div>
     <div class="overall-chip" id="overall-chip">0 / 39</div>
   </div>
 </div>
@@ -122,34 +98,48 @@ const PULL = [
   {name:'Pull-ups',sets:'4×6-8',w:[15,15,15,15,17.5,17.5,17.5,17.5,20,20,20,20,22.5,22.5,22.5,22.5,25,25,25,25,27.5,27.5,27.5,27.5,30,30,30,30,32.5,32.5,32.5,32.5,32.5,35,35,35,35,35,35]},
   {name:'Seated row',sets:'4×6-8'},{name:'One arm cable row',sets:'3×10-12'},{name:'Rear delt fly',sets:'4×15-20'},{name:'Cable lat raise',sets:'3×15-20'},{name:'DB curl',sets:'3×8-12'},{name:'Inc DB curls',sets:'2×10-15'}
 ];
-const ALL_EX = [...PUSH, ...PULL];
+
+const SESSIONS = [
+    { label: 'Session 1: Push', data: PUSH, id: 's1' },
+    { label: 'Session 2: Pull', data: PULL, id: 's2' },
+    { label: 'Session 3: Push', data: PUSH, id: 's3' },
+    { label: 'Session 4: Pull', data: PULL, id: 's4' }
+];
 
 let state = {};
 let cur = 0;
 
-function load() { state = JSON.parse(localStorage.getItem('gym_v1') || '{}'); }
-function save() { localStorage.setItem('gym_v1', JSON.stringify(state)); }
+function load() { state = JSON.parse(localStorage.getItem('gym_v4_session') || '{}'); }
+function save() { localStorage.setItem('gym_v4_session', JSON.stringify(state)); }
 
-function isDone(wi, name) { return !!state[wi + '|' + name]; }
+function isDone(wi, sid, name) { return !!state[wi + '|' + sid + '|' + name]; }
 
-function toggle(wi, name) { 
-    state[wi + '|' + name] = !isDone(wi, name); 
+function toggle(wi, sid, name) { 
+    state[wi + '|' + sid + '|' + name] = !isDone(wi, sid, name); 
     save(); 
     render(); 
 }
 
-// Logic to save manual edits to sets or weight
-function updateValue(wi, name, type, val) {
-    state[wi + '|' + name + '|' + type] = val;
+function updateValue(wi, sid, name, type, val) {
+    state[wi + '|' + sid + '|' + name + '|' + type] = val;
     save();
 }
 
-function hasRecord(wi) { return ALL_EX.some(e => isDone(wi, e.name)); }
-function weekDone(wi) { return ALL_EX.every(e => isDone(wi, e.name)); }
+function getWeekDoneCount(wi) {
+    let count = 0;
+    SESSIONS.forEach(s => {
+        s.data.forEach(ex => { if(isDone(wi, s.id, ex.name)) count++; });
+    });
+    return count;
+}
+
+function weekDone(wi) {
+    return getWeekDoneCount(wi) === (PUSH.length + PULL.length) * 2;
+}
 
 function findLatestWithRecord() {
   for (let i = WEEKS.length - 1; i >= 0; i--) {
-    if (hasRecord(i)) return i;
+    if (getWeekDoneCount(i) > 0) return i;
   }
   return 0;
 }
@@ -163,24 +153,66 @@ function render() {
     `<button class="tab ${i===cur?'active':''} ${weekDone(i)?'done':''}" onclick="cur=${i};render()">W${w.n}</button>`
   ).join('');
 
-  const doneCount = ALL_EX.filter(e => isDone(cur, e.name)).length;
-  const pct = Math.round((doneCount / ALL_EX.length) * 100);
+  const totalExPerWeek = (PUSH.length + PULL.length) * 2;
+  const doneCount = getWeekDoneCount(cur);
+  const pct = Math.round((doneCount / totalExPerWeek) * 100);
 
-  function rows(list) {
-    return list.map(ex => {
-      const checked = isDone(cur, ex.name);
-      
-      // Check for manually edited values first, then default to original array
-      const currentSets = state[cur + '|' + ex.name + '|sets'] || ex.sets;
-      let currentWt = state[cur + '|' + ex.name + '|wt'] || (ex.w ? ex.w[cur] : '');
+  let contentHtml = `
+    <div class="week-header">
+      <div class="wh-title">Week ${cur+1} · ${WEIGHTS[cur]}kg</div>
+      <div class="wh-date">w/c ${WEEKS[cur].date} 2026</div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-val">${doneCount}</div><div class="stat-label">Done</div></div>
+        <div class="stat"><div class="stat-val">${totalExPerWeek - doneCount}</div><div class="stat-label">Left</div></div>
+        <div class="stat"><div class="stat-val">${pct}%</div><div class="stat-label">Goal</div></div>
+      </div>
+      <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+    </div>`;
 
-      return `
-        <div class="ex-card">
-          <div class="ex-row">
-            <div class="chk ${checked?'on':''}" onclick="toggle(${cur}, '${ex.name}')"></div>
-            <div class="ex-info" onclick="toggle(${cur}, '${ex.name}')">
-              <div class="ex-name ${checked?'done':''}">${ex.name}</div>
-              <div class="ex-sets editable" contenteditable="true" 
+  SESSIONS.forEach(session => {
+      contentHtml += `<div class="section-label">${session.label}</div>`;
+      contentHtml += session.data.map(ex => {
+          const checked = isDone(cur, session.id, ex.name);
+          const currentSets = state[cur + '|' + session.id + '|' + ex.name + '|sets'] || ex.sets;
+          const currentWt = state[cur + '|' + session.id + '|' + ex.name + '|wt'] || (ex.w ? ex.w[cur] : '');
+          
+          return `
+            <div class="ex-card">
+              <div class="ex-row">
+                <div class="chk ${checked?'on':''}" onclick="toggle(${cur}, '${session.id}', '${ex.name}')"></div>
+                <div class="ex-info" onclick="toggle(${cur}, '${session.id}', '${ex.name}')">
+                  <div class="ex-name ${checked?'done':''}">${ex.name}</div>
+                  <div class="ex-sets editable" contenteditable="true" 
+                       onblur="updateValue(${cur}, '${session.id}', '${ex.name}', 'sets', this.innerText)" 
+                       onclick="event.stopPropagation()">${currentSets}</div>
+                </div>
+                <div class="ex-wt">
+                    <span class="editable" contenteditable="true" 
+                          onblur="updateValue(${cur}, '${session.id}', '${ex.name}', 'wt', this.innerText)" 
+                          onclick="event.stopPropagation()">${currentWt}</span><span style="font-size:9px;color:var(--faint)">${currentWt ? 'kg' : ''}</span>
+                </div>
+              </div>
+            </div>`;
+      }).join('');
+  });
+
+  document.getElementById('week-content').innerHTML = contentHtml;
+
+  setTimeout(() => {
+    const activeTab = document.querySelector('.tab.active');
+    if(activeTab) activeTab.scrollIntoView({inline:'center', behavior:'smooth'});
+  }, 50);
+}
+
+function changeWeek(d) { cur = Math.max(0, Math.min(WEEKS.length - 1, cur + d)); render(); }
+
+load();
+cur = findLatestWithRecord(); 
+render();
+</script>
+</body>
+</html>
+ets editable" contenteditable="true" 
                    onblur="updateValue(${cur}, '${ex.name}', 'sets', this.innerText)" 
                    onclick="event.stopPropagation()">${currentSets}</div>
             </div>
