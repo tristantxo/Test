@@ -4,251 +4,513 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Gym Plan</title>
-
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
-body{
-  margin:0;
-  background:#0a0a0a;
-  color:#efefef;
-  font-family:DM Sans;
-  display:flex;
-  flex-direction:column;
-  height:100vh;
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#080808;
+  --surface:#111;
+  --border:#1e1e1e;
+  --green:#00e87a;
+  --green-dim:rgba(0,232,122,0.1);
+  --green-border:rgba(0,232,122,0.25);
+  --text:#f0f0f0;
+  --muted:#555;
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'Syne',sans-serif;
 }
 
-/* HEADER */
-.top{
-  padding:16px;
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden}
+
+/* Layout */
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+
+/* Header */
+header{
+  padding:20px 20px 14px;
   display:flex;
+  align-items:flex-end;
   justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+.logo{font-size:22px;font-weight:800;letter-spacing:-0.5px}
+.logo span{color:var(--green)}
+.header-right{display:flex; gap:8px; align-items:center;}
+.week-badge{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--muted);
+  background:#151515;
+  border:1px solid var(--border);
+  padding:5px 10px;
+  border-radius:20px;
 }
 
-.title{font-size:20px;font-weight:600}
-.sub{font-size:11px;color:#999;font-family:DM Mono}
+/* Progress bar */
+.progress-bar{
+  height:2px;
+  background:var(--border);
+  position:relative;
+}
+.progress-fill{
+  height:100%;
+  background:var(--green);
+  transition:width 0.4s ease;
+}
 
-/* NAV */
-.tabs,.sessions{
+/* Nav rows */
+.nav-row{
   display:flex;
   gap:6px;
-  padding:0 16px 10px;
+  padding:12px 16px 0;
   overflow-x:auto;
+  scrollbar-width:none;
 }
+.nav-row::-webkit-scrollbar{display:none}
 
-.tab,.sess{
-  font-family:DM Mono;
-  font-size:11px;
-  padding:6px 10px;
-  border-radius:20px;
-  border:1px solid #333;
-  color:#666;
+.chip{
+  font-family:var(--mono);
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.04em;
+  padding:6px 12px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  color:var(--muted);
   white-space:nowrap;
   cursor:pointer;
+  background:transparent;
+  transition:all 0.15s;
+  flex-shrink:0;
 }
+.chip:hover{border-color:#333;color:#999}
+.chip.active{background:var(--text);color:#000;border-color:var(--text);font-weight:600}
+.chip.completed{border-color:var(--green-border);color:var(--green)}
+.chip.prog-toggle{border-color:var(--green-border); color:var(--green)}
 
-.active{background:#fff;color:#000}
-.done{color:#3ddc84;border-color:#3ddc84}
+/* Session tabs */
+.sess-row{
+  display:flex;
+  gap:6px;
+  padding:8px 16px 12px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.sess-row::-webkit-scrollbar{display:none}
 
-/* CONTENT */
+.sess-chip{
+  font-family:var(--mono);
+  font-size:11px;
+  padding:7px 14px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  color:var(--muted);
+  white-space:nowrap;
+  cursor:pointer;
+  background:transparent;
+  transition:all 0.15s;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.sess-chip:hover{border-color:#333;color:#888}
+.sess-chip.active{border-color:var(--green);color:var(--green);background:var(--green-dim)}
+.sess-chip .dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* Content */
 .content{
   flex:1;
-  overflow:auto;
-  padding:0 14px 20px;
+  overflow-y:auto;
+  padding:4px 16px 32px;
+  scrollbar-width:thin;
+  scrollbar-color:var(--border) transparent;
 }
 
+/* Summary strip */
+.summary{
+  display:flex;
+  gap:4px;
+  margin-bottom:8px;
+  font-family:var(--mono);
+  font-size:10px;
+  color:var(--muted);
+}
+
+/* Exercise card */
 .card{
-  background:#141414;
-  border:1px solid #222;
-  border-radius:14px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
   margin-bottom:6px;
+  overflow:hidden;
+  transition:border-color 0.2s, background 0.2s;
 }
-
 .card.done{
-  border-color:rgba(61,220,132,0.3);
-  background:rgba(61,220,132,0.05);
+  border-color:var(--green-border);
+  background:var(--green-dim);
 }
 
-.row{
+.card-main{
   display:flex;
-  justify-content:space-between;
-  padding:12px;
   align-items:center;
+  gap:12px;
+  padding:13px 14px;
   cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
 }
 
-.left{
+/* Checkbox */
+.cb{
+  width:20px;height:20px;
+  border-radius:50%;
+  border:1.5px solid var(--muted);
+  flex-shrink:0;
   display:flex;
   align-items:center;
-  gap:10px;
+  justify-content:center;
+  transition:all 0.2s;
+}
+.cb svg{opacity:0;transform:scale(0.5);transition:all 0.2s}
+.done .cb{border-color:var(--green);background:var(--green)}
+.done .cb svg{opacity:1;transform:scale(1)}
+
+.ex-info{flex:1;min-width:0}
+.ex-name{
+  font-size:14px;
+  font-weight:600;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.done .ex-name{color:#4d9969}
+.ex-sets{
+  font-family:var(--mono);
+  font-size:10px;
+  color:var(--muted);
+  margin-top:2px;
 }
 
-.check{
-  width:18px;height:18px;
-  border-radius:50%;
-  border:1.5px solid #444;
-}
-
-.check.on{
-  background:#3ddc84;
-  border-color:#3ddc84;
-}
-
-.name{font-size:14px}
-.meta{font-size:11px;color:#888;font-family:DM Mono}
-
-.wt{
-  font-family:DM Mono;
-  min-width:50px;
+.ex-weight{
+  font-family:var(--mono);
+  font-size:13px;
+  font-weight:500;
+  color:var(--text);
   text-align:right;
+  flex-shrink:0;
+}
+.ex-weight.placeholder{color:var(--muted)}
+
+.card-edit{
+  border-top:1px solid var(--border);
+  padding:10px 14px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.edit-label{font-family:var(--mono);font-size:10px;color:var(--muted);white-space:nowrap}
+.edit-input{
+  font-family:var(--mono);
+  font-size:12px;
+  background:transparent;
+  border:none;
+  outline:none;
+  color:var(--text);
+  width:100%;
 }
 
-.edit{
-  border-bottom:1px dashed #444;
-  outline:none;
+/* Progression Section Styles */
+.prog-container { padding-top: 10px; }
+.prog-ex-group { margin-bottom: 20px; border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+.prog-title { font-family: var(--mono); font-size: 12px; color: var(--green); margin-bottom: 12px; text-transform: uppercase; }
+.prog-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); 
+  gap: 8px; 
 }
+.prog-item { display: flex; flex-direction: column; gap: 4px; }
+.prog-item label { font-family: var(--mono); font-size: 8px; color: var(--muted); }
+.prog-item input { 
+  background: #151515; 
+  border: 1px solid var(--border); 
+  color: var(--text); 
+  font-family: var(--mono); 
+  font-size: 11px; 
+  padding: 4px; 
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* Toast */
+.toast{
+  position:fixed;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--green);
+  color:#000;
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:600;
+  padding:8px 16px;
+  border-radius:20px;
+  opacity:0;
+  transition:all 0.25s;
+  pointer-events:none;
+  white-space:nowrap;
+  z-index: 100;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.hidden { display: none !important; }
 </style>
 </head>
-
 <body>
 
-<div class="top">
-  <div>
-    <div class="title">Gym Plan</div>
-    <div class="sub">May – Dec 2026</div>
+<div class="app">
+  <header>
+    <div class="logo">GYM<span>.</span></div>
+    <div class="header-right">
+        <button class="chip prog-toggle" onclick="toggleProgView()" id="progBtn">PROG</button>
+        <div class="week-badge" id="weekBadge">Week 1 / 35</div>
+    </div>
+  </header>
+
+  <div id="workoutControls">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="nav-row" id="weekNav"></div>
+    <div class="sess-row" id="sessNav"></div>
   </div>
-  <div class="sub" id="weekLabel"></div>
+
+  <div class="content" id="content"></div>
 </div>
 
-<div class="tabs" id="tabs"></div>
-<div class="sessions" id="sessions"></div>
-
-<div class="content" id="content"></div>
+<div class="toast" id="toast"></div>
 
 <script>
-
-const WEEKS = Array.from({length:35},(_,i)=>({n:i+1}));
+// ─── Data ────────────────────────────────────────────────────────────────────
 
 const PUSH = [
-  {name:'Incline bench',sets:'4×6-8',w:[25,25,25,25,27.5,27.5,27.5,27.5,27.5,30,30,30,30,30,30,32.5,32.5,32.5,32.5,32.5,32.5,35,35,35,35,35,35,35,37.5,37.5,37.5,37.5,37.5,37.5,40]},
-  {name:'Flat bench',sets:'4×6-8',w:[27.5,27.5,27.5,27.5,30,30,30,30,30,32.5,32.5,32.5,32.5,32.5,32.5,35,35,35,35,35,35,37.5,37.5,37.5,37.5,37.5,37.5,40,40,40,40,40,40,42.5]},
-  {name:'Military press',sets:'3×6-8',w:[32.5,32.5,32.5,32.5,35,35,35,35,37.5,37.5,37.5,37.5,40,40,40,40,42.5,42.5,42.5,42.5,45,45,45,45,47.5,47.5,47.5,47.5,50,50,50,50,52.5,52.5,55]},
-  {name:'Cable lateral raise',sets:'4×15-20'},
-  {name:'Tricep pushdown',sets:'3×10-15'},
-  {name:'Overhead tricep ext',sets:'3×10-15'},
-  {name:'Face pull',sets:'3×15-20'}
+  {name:'Incline Bench',   sets:'4 × 6–8', w:[25,25,25,25,27.5,27.5,27.5,27.5,27.5,30,30,30,30,30,30,32.5,32.5,32.5,32.5,32.5,32.5,35,35,35,35,35,35,35,37.5,37.5,37.5,37.5,37.5,37.5,40]},
+  {name:'Flat Bench',      sets:'4 × 6–8', w:[27.5,27.5,27.5,27.5,30,30,30,30,30,32.5,32.5,32.5,32.5,32.5,32.5,35,35,35,35,35,35,37.5,37.5,37.5,37.5,37.5,37.5,40,40,40,40,40,40,42.5]},
+  {name:'Military Press',  sets:'3 × 6–8', w:[32.5,32.5,32.5,32.5,35,35,35,35,37.5,37.5,37.5,37.5,40,40,40,40,42.5,42.5,42.5,42.5,45,45,45,45,47.5,47.5,47.5,47.5,50,50,50,50,52.5,52.5,55]},
+  {name:'Cable Lateral Raise',    sets:'4 × 15–20'},
+  {name:'Tricep Pushdown',         sets:'3 × 10–15'},
+  {name:'Overhead Tricep Ext',     sets:'3 × 10–15'},
+  {name:'Face Pull',               sets:'3 × 15–20'},
 ];
 
 const PULL = [
-  {name:'Pull-ups',sets:'4×6-8',w:[15,15,15,15,17.5,17.5,17.5,17.5,20,20,20,20,22.5,22.5,22.5,22.5,25,25,25,25,27.5,27.5,27.5,27.5,30,30,30,30,32.5,32.5,32.5,32.5,35,35,35]},
-  {name:'Seated row',sets:'4×6-8'},
-  {name:'One arm row',sets:'3×10-12'},
-  {name:'Rear delt fly',sets:'4×15-20'},
-  {name:'Cable lat raise',sets:'3×15-20'},
-  {name:'DB curl',sets:'3×8-12'},
-  {name:'Incline curls',sets:'2×10-15'}
+  {name:'Pull-ups',     sets:'4 × 6–8', w:[15,15,15,15,17.5,17.5,17.5,17.5,20,20,20,20,22.5,22.5,22.5,22.5,25,25,25,25,27.5,27.5,27.5,27.5,30,30,30,30,32.5,32.5,32.5,32.5,35,35,35]},
+  {name:'Seated Row',   sets:'4 × 6–8'},
+  {name:'One Arm Row',  sets:'3 × 10–12'},
+  {name:'Rear Delt Fly',sets:'4 × 15–20'},
+  {name:'Cable Lat Raise',sets:'3 × 15–20'},
+  {name:'DB Curl',      sets:'3 × 8–12'},
+  {name:'Incline Curls',sets:'2 × 10–15'},
 ];
 
-const SESSIONS=[
-  {name:'Chest',ex:PUSH},
-  {name:'Back',ex:PULL},
-  {name:'Chest',ex:PUSH},
-  {name:'Back',ex:PULL}
+const SESSIONS = [
+  {name:'Push A', ex:PUSH},
+  {name:'Pull A', ex:PULL},
+  {name:'Push B', ex:PUSH},
+  {name:'Pull B', ex:PULL},
 ];
 
-let w=0, s=0;
-let state=JSON.parse(localStorage.getItem('gym_state')||'{}');
+const TOTAL_WEEKS = 35;
 
-function key(w,s,i){return `${w}_${s}_${i}`}
+// ─── State ───────────────────────────────────────────────────────────────────
 
-function toggle(i){
-  const k=key(w,s,i);
-  state[k]=!state[k];
-  localStorage.setItem('gym_state',JSON.stringify(state));
-  render();
+let currentWeek = 0;
+let currentSess = 0;
+let isProgView = false;
+let state = {
+    customProg: {} // name: [w1, w2...]
+};
+
+try { 
+    const saved = JSON.parse(localStorage.getItem('gym_v2') || '{}'); 
+    state = { ...state, ...saved };
+} catch(e){}
+
+function save() {
+  try { localStorage.setItem('gym_v2', JSON.stringify(state)); } catch(e){}
 }
 
-function isDone(i){
-  return !!state[key(w,s,i)];
+// ─── Logic ───────────────────────────────────────────────────────────────────
+
+function toggleKey(w, s, i)   { return `t_${w}_${s}_${i}`; }
+function setsKey(w, s, i)     { return `s_${w}_${s}_${i}`; }
+function weightKey(w, s, i)   { return `wt_${w}_${s}_${i}`; }
+
+function isDone(w, s, i) { return !!state[toggleKey(w,s,i)]; }
+
+function getSets(w, s, i)   { return state[setsKey(w,s,i)] ?? SESSIONS[s].ex[i].sets; }
+
+function getWeight(w, s, i) {
+  // 1. Check if user manually overrode this specific session
+  const override = state[weightKey(w, s, i)];
+  if (override !== undefined) return override;
+
+  // 2. Check if user modified the global progression for this exercise
+  const ex = SESSIONS[s].ex[i];
+  if (state.customProg && state.customProg[ex.name]) {
+      return state.customProg[ex.name][w] ?? '';
+  }
+
+  // 3. Fallback to hardcoded array
+  return ex.w ? (ex.w[w] ?? '') : '';
 }
 
-/* NAV */
-function setWeek(i){w=i;render();}
-function setSession(i){s=i;render();}
+function saveSets(w, s, i, v)   { state[setsKey(w,s,i)] = v; save(); }
+function saveWeight(w, s, i, v) { state[weightKey(w,s,i)] = v; save(); }
 
-/* EDIT SAVE */
-function saveEdit(wk,ss,i,field,val){
-  const k=`e_${wk}_${ss}_${i}_${field}`;
-  state[k]=val;
-  localStorage.setItem('gym_state',JSON.stringify(state));
+function updateProgWeight(exName, weekIdx, val) {
+    if(!state.customProg[exName]) {
+        // Find original array to initialize
+        let original = [];
+        for(let s of SESSIONS) {
+            let e = s.ex.find(x => x.name === exName);
+            if(e && e.w) { original = [...e.w]; break; }
+        }
+        if(original.length === 0) original = Array(TOTAL_WEEKS).fill('');
+        state.customProg[exName] = original;
+    }
+    state.customProg[exName][weekIdx] = val;
+    save();
 }
 
-function getEdit(wk,ss,i,field,fb){
-  return state[`e_${wk}_${ss}_${i}_${field}`] ?? fb;
+// ─── Rendering ───────────────────────────────────────────────────────────────
+
+function toggleProgView() {
+    isProgView = !isProgView;
+    document.getElementById('workoutControls').classList.toggle('hidden', isProgView);
+    document.getElementById('progBtn').textContent = isProgView ? 'BACK' : 'PROG';
+    render();
 }
 
-/* RENDER */
-function renderTabs(){
-  document.getElementById('tabs').innerHTML =
-    WEEKS.map((_,i)=>`
-      <div class="tab ${i===w?'active':''}" onclick="setWeek(${i})">${i+1}</div>
-    `).join('');
+function renderProgressionEditor() {
+    const container = document.getElementById('content');
+    let html = `<div class="prog-container">`;
+    
+    // Get unique exercises that have progression arrays
+    const progExercises = [];
+    [...PUSH, ...PULL].forEach(e => {
+        if (e.w && !progExercises.find(x => x.name === e.name)) progExercises.push(e);
+    });
 
-  document.getElementById('sessions').innerHTML =
-    SESSIONS.map((x,i)=>`
-      <div class="sess ${i===s?'active':''}" onclick="setSession(${i})">${x.name}</div>
-    `).join('');
-}
-
-function render(){
-
-  renderTabs();
-
-  const session=SESSIONS[s];
-
-  document.getElementById('content').innerHTML =
-    session.ex.map((e,i)=>{
-      const done=isDone(i);
-
-      const sets=getEdit(w,s,i,'sets',e.sets);
-      const wt=getEdit(w,s,i,'wt',e.w?e.w[w]||'':'');
-
-      return `
-      <div class="card ${done?'done':''}">
-        <div class="row" onclick="toggle(${i})">
-          
-          <div class="left">
-            <div class="check ${done?'on':''}"></div>
-            <div>
-              <div class="name ${done?'done':''}">${e.name}</div>
-
-              <div class="meta edit"
-                contenteditable="true"
-                onclick="event.stopPropagation()"
-                onblur="saveEdit(${w},${s},${i},'sets',this.innerText)"
-              >${sets}</div>
+    html += progExercises.map(ex => {
+        const weights = state.customProg[ex.name] || ex.w;
+        return `
+            <div class="prog-ex-group">
+                <div class="prog-title">${ex.name}</div>
+                <div class="prog-grid">
+                    ${Array.from({length: TOTAL_WEEKS}, (_, i) => `
+                        <div class="prog-item">
+                            <label>W${i+1}</label>
+                            <input type="number" step="0.5" value="${weights[i] || ''}" 
+                                onchange="updateProgWeight('${ex.name}', ${i}, this.value)">
+                        </div>
+                    `).join('')}
+                </div>
             </div>
-          </div>
-
-          <div class="wt edit"
-            contenteditable="true"
-            onclick="event.stopPropagation()"
-            onblur="saveEdit(${w},${s},${i},'wt',this.innerText)"
-          >
-            ${wt}
-          </div>
-
-        </div>
-      </div>`;
+        `;
     }).join('');
 
-  document.getElementById('weekLabel').innerText=
-    `Week ${w+1} / 35`;
+    html += `</div>`;
+    container.innerHTML = html;
 }
 
+function renderContent() {
+  if (isProgView) return renderProgressionEditor();
+
+  const session = SESSIONS[currentSess];
+  const { done, total } = sessionProgress(currentWeek, currentSess);
+  const pct = total ? (done/total*100).toFixed(0) : 0;
+
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('weekBadge').textContent = `Week ${currentWeek+1} / ${TOTAL_WEEKS}`;
+
+  const content = document.getElementById('content');
+  const summary = `<div class="summary">${done} of ${total} done · ${pct}% complete</div>`;
+
+  const cards = session.ex.map((e, i) => {
+    const done = isDone(currentWeek, currentSess, i);
+    const sets = getSets(currentWeek, currentSess, i);
+    const wt   = getWeight(currentWeek, currentSess, i);
+    const wtStr = wt !== '' ? `${wt} kg` : '—';
+
+    return `
+    <div class="card ${done?'done':''}" id="card_${i}">
+      <div class="card-main" onclick="toggle(${currentWeek},${currentSess},${i})">
+        <div class="cb"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="ex-info">
+          <div class="ex-name">${e.name}</div>
+          <div class="ex-sets">${sets}</div>
+        </div>
+        <div class="ex-weight ${wt===''?'placeholder':''}">${wtStr}</div>
+      </div>
+      <div class="card-edit">
+        <span class="edit-label">SETS</span>
+        <input class="edit-input" type="text" value="${sets}" onchange="saveSets(${currentWeek},${currentSess},${i},this.value);render()" onclick="event.stopPropagation()">
+        <div class="edit-wt-wrap">
+          <span class="edit-label">KG</span>
+          <input class="edit-input" type="number" step="0.5" style="width:50px;text-align:right" value="${wt}" onchange="saveWeight(${currentWeek},${currentSess},${i},this.value);render()" onclick="event.stopPropagation()">
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  content.innerHTML = summary + cards;
+}
+
+// ─── Standard Functions (Helper/Nav) ──────────────────────────────────────────
+
+function sessionProgress(w, s) {
+  const ex = SESSIONS[s].ex;
+  const done = ex.filter((_,i) => isDone(w,s,i)).length;
+  return { done, total: ex.length };
+}
+
+function toggle(w, s, i) {
+  const k = toggleKey(w,s,i);
+  state[k] = !state[k];
+  save();
+  render();
+  if (SESSIONS[s].ex.every((_,j) => isDone(w,s,j))) showToast('Session complete 🔥');
+}
+
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+function renderWeekNav() {
+  const nav = document.getElementById('weekNav');
+  nav.innerHTML = Array.from({length: TOTAL_WEEKS}, (_, i) => {
+    const all = SESSIONS.every((_, s) => { const {done, total} = sessionProgress(i, s); return done === total; });
+    return `<button class="chip ${i === currentWeek ? 'active' : all ? 'completed' : ''}" onclick="setWeek(${i})">${i+1}</button>`;
+  }).join('');
+}
+
+function renderSessNav() {
+  document.getElementById('sessNav').innerHTML = SESSIONS.map((s, i) => {
+    const { done, total } = sessionProgress(currentWeek, i);
+    return `<button class="sess-chip ${i === currentSess ? 'active' : ''}" onclick="setSess(${i})">
+      <span class="dot"></span>${s.name} <span style="opacity:0.5">${done}/${total}</span>
+    </button>`;
+  }).join('');
+}
+
+function setWeek(i) { currentWeek = i; render(); }
+function setSess(i) { currentSess = i; render(); }
+function render() { renderWeekNav(); renderSessNav(); renderContent(); }
+
 render();
-
 </script>
-
 </body>
 </html>
