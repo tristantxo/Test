@@ -8,25 +8,37 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
+:root{
+  --bg:#0a0a0a;
+  --card:#141414;
+  --border:#242424;
+  --text:#efefef;
+  --muted:#9a9a9a;
+  --green:#3ddc84;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
 body{
-  margin:0;
-  background:#0a0a0a;
-  color:#efefef;
+  background:var(--bg);
+  color:var(--text);
   font-family:DM Sans;
   display:flex;
   flex-direction:column;
   height:100vh;
 }
 
+/* HEADER */
 .top{
-  padding:16px;
+  padding:18px 16px 10px;
   display:flex;
   justify-content:space-between;
 }
 
-.title{font-size:20px;font-weight:600;}
-.sub{font-size:11px;color:#999;font-family:DM Mono;}
+.title{font-size:20px;font-weight:600}
+.sub{font-size:11px;color:var(--muted);font-family:DM Mono}
 
+/* NAV */
 .tabs,.sessions{
   display:flex;
   gap:6px;
@@ -37,39 +49,67 @@ body{
 .tab,.sess{
   font-family:DM Mono;
   font-size:11px;
-  padding:6px 10px;
-  border-radius:20px;
-  border:1px solid #333;
+  padding:7px 11px;
+  border-radius:999px;
+  border:1px solid var(--border);
   color:#666;
   white-space:nowrap;
 }
 
-.active{background:#fff;color:#000;}
+.active{background:#fff;color:#000}
+.done{color:var(--green);border-color:rgba(61,220,132,0.4)}
 
-.done{color:#3ddc84;border-color:#3ddc84;}
-
+/* CONTENT */
 .content{
   flex:1;
   overflow:auto;
-  padding:0 14px 20px;
+  padding:6px 14px 20px;
 }
 
 .card{
-  background:#141414;
-  border:1px solid #222;
+  background:var(--card);
+  border:1px solid var(--border);
   border-radius:14px;
-  margin-bottom:6px;
+  margin-bottom:8px;
+  transition:0.2s;
+}
+
+.card.done{
+  border-color:rgba(61,220,132,0.35);
+  background:rgba(61,220,132,0.05);
 }
 
 .row{
   display:flex;
   justify-content:space-between;
-  padding:12px;
+  padding:12px 14px;
+  align-items:center;
+  cursor:pointer;
 }
 
-.name{font-size:14px;}
-.meta{font-size:11px;color:#888;font-family:DM Mono;}
-.wt{font-family:DM Mono;}
+.name{font-size:14px}
+.meta{font-size:11px;color:var(--muted);font-family:DM Mono;margin-top:2px}
+
+.wt{font-family:DM Mono;font-weight:600}
+.check{
+  width:18px;height:18px;border-radius:50%;
+  border:1.5px solid #444;
+  margin-right:10px;
+  flex-shrink:0;
+}
+
+.check.on{
+  background:var(--green);
+  border-color:var(--green);
+}
+
+/* layout */
+.left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
 </style>
 </head>
 
@@ -90,24 +130,19 @@ body{
 
 <script>
 
-const WEEKS = Array.from({length:35},(_,i)=>({
-  n:i+1,
-  d:new Date(2026,4,4+i*7).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})
-}));
+const WEEKS = Array.from({length:35},(_,i)=>({n:i+1}));
 
-const PUSH = [
+const PUSH=[
   {name:'Incline bench',sets:'4×6-8',w:[25,25,25,25,27.5,27.5,27.5,27.5,27.5,30,30,30,30,30,30,32.5,32.5,32.5,32.5,32.5,32.5,35,35,35,35,35,35,35,37.5,37.5,37.5,37.5,37.5,37.5,40]},
   {name:'Flat bench',sets:'4×6-8',w:[27.5,27.5,27.5,27.5,30,30,30,30,30,32.5,32.5,32.5,32.5,32.5,32.5,35,35,35,35,35,35,37.5,37.5,37.5,37.5,37.5,37.5,40,40,40,40,40,40,42.5]},
   {name:'Military press',sets:'3×6-8',w:[32.5,32.5,32.5,32.5,35,35,35,35,37.5,37.5,37.5,37.5,40,40,40,40,42.5,42.5,42.5,42.5,45,45,45,45,47.5,47.5,47.5,47.5,50,50,50,50,52.5,52.5,55]},
-
-  // accessories (no progression)
   {name:'Cable lateral raise',sets:'4×15-20'},
   {name:'Tricep pushdown',sets:'3×10-15'},
   {name:'Overhead tricep ext',sets:'3×10-15'},
   {name:'Face pull',sets:'3×15-20'}
 ];
 
-const PULL = [
+const PULL=[
   {name:'Pull-ups',sets:'4×6-8',w:[15,15,15,15,17.5,17.5,17.5,17.5,20,20,20,20,22.5,22.5,22.5,22.5,25,25,25,25,27.5,27.5,27.5,27.5,30,30,30,30,32.5,32.5,32.5,32.5,35,35,35]},
   {name:'Seated row',sets:'4×6-8'},
   {name:'One arm row',sets:'3×10-12'},
@@ -117,7 +152,7 @@ const PULL = [
   {name:'Incline curls',sets:'2×10-15'}
 ];
 
-const SESSIONS = [
+const SESSIONS=[
   {name:'Chest',ex:PUSH},
   {name:'Back',ex:PULL},
   {name:'Chest',ex:PUSH},
@@ -125,42 +160,59 @@ const SESSIONS = [
 ];
 
 let w=0,s=0;
+let state=JSON.parse(localStorage.getItem('gym_state')||'{}');
+
+function key(w,s,i){return `${w}_${s}_${i}`}
+
+function toggle(i){
+  const k=key(w,s,i);
+  state[k]=!state[k];
+  localStorage.setItem('gym_state',JSON.stringify(state));
+  render();
+}
+
+function isDone(i){
+  return !!state[key(w,s,i)];
+}
 
 function renderTabs(){
-  document.getElementById('tabs').innerHTML =
-    WEEKS.map((_,i)=>`
-      <div class="tab ${i===w?'active':''}">${i+1}</div>
-    `).join('');
+  document.getElementById('tabs').innerHTML=
+    WEEKS.map((_,i)=>`<div class="tab ${i===w?'active':''}">${i+1}</div>`).join('');
 
-  document.getElementById('sessions').innerHTML =
-    SESSIONS.map((x,i)=>`
-      <div class="sess ${i===s?'active':''}">${x.name}</div>
-    `).join('');
+  document.getElementById('sessions').innerHTML=
+    SESSIONS.map((x,i)=>`<div class="sess ${i===s?'active':''}">${x.name}</div>`).join('');
 }
 
 function render(){
 
   renderTabs();
 
-  const session = SESSIONS[s];
+  const session=SESSIONS[s];
 
-  document.getElementById('content').innerHTML =
-    session.ex.map(e=>`
-      <div class="card">
-        <div class="row">
-          <div>
-            <div class="name">${e.name}</div>
-            <div class="meta">${e.sets}</div>
+  let done=0;
+
+  document.getElementById('content').innerHTML=
+    session.ex.map((e,i)=>{
+      const d=isDone(i);
+      if(d)done++;
+
+      return `
+      <div class="card ${d?'done':''}">
+        <div class="row" onclick="toggle(${i})">
+          <div class="left">
+            <div class="check ${d?'on':''}"></div>
+            <div>
+              <div class="name">${e.name}</div>
+              <div class="meta">${e.sets}</div>
+            </div>
           </div>
-          <div class="wt">
-            ${e.w ? e.w[w] + ' kg' : ''}
-          </div>
+          <div class="wt">${e.w? (e.w[w]??'')+' kg':''}</div>
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
 
-  document.getElementById('week').innerText =
-    `${w+1} / 35`;
+  document.getElementById('week').innerText=
+    `${w+1} / 35 · ${done}/${session.ex.length}`;
 }
 
 render();
