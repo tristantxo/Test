@@ -8,13 +8,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Gym Plan">
 <meta name="theme-color" content="#0a0a0a">
-
 <title>Gym Plan</title>
 
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
-:root{
+:root {
   --bg:#0a0a0a;
   --s1:#141414;
   --s2:#1e1e1e;
@@ -40,446 +39,99 @@
   --r3:24px;
 }
 
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  -webkit-tap-highlight-color:transparent;
-}
-
-html,body{
-  height:100%;
-}
-
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{
   background:var(--bg);
   color:var(--tx);
   font-family:'DM Sans',sans-serif;
-
   display:flex;
   flex-direction:column;
+  height:100%;
   overflow:hidden;
-
-  padding-top:env(safe-area-inset-top);
-  padding-bottom:env(safe-area-inset-bottom);
 }
 
-/* TOP */
-
+/* HEADER */
 .topbar{
-  flex-shrink:0;
-
-  padding:16px 18px 10px;
-
   display:flex;
   justify-content:space-between;
-  align-items:center;
+  padding:16px 18px 10px;
 }
-
-.title{
-  font-size:22px;
-  font-weight:600;
-  letter-spacing:-0.4px;
-}
-
-.subtitle{
-  font-size:11px;
-  color:var(--t2);
-  font-family:'DM Mono',monospace;
-  margin-top:2px;
-}
+.title{font-size:22px;font-weight:600;}
+.subtitle{font-size:11px;color:var(--t2);font-family:'DM Mono';}
 
 .chip{
+  font-family:'DM Mono';
+  font-size:12px;
+  padding:7px 13px;
+  border-radius:24px;
   background:var(--s2);
   border:1px solid var(--b2);
-  border-radius:var(--r3);
-
-  padding:7px 13px;
-
-  font-size:12px;
-  font-family:'DM Mono',monospace;
-
   color:var(--t2);
-  text-align:center;
-  line-height:1.5;
 }
+.chip em{color:var(--green);font-style:normal}
 
-.chip em{
-  color:var(--green);
-  font-style:normal;
-  font-weight:500;
-}
-
-/* WEEK TABS */
-
-.tabs-wrap{
-  flex-shrink:0;
-  padding:4px 0 8px;
-}
-
-.tabs{
-  display:flex;
-  gap:5px;
-
-  padding:0 18px;
-
-  overflow-x:auto;
-  scrollbar-width:none;
-}
-
-.tabs::-webkit-scrollbar{
-  display:none;
-}
-
+/* TABS */
+.tabs{display:flex;gap:5px;overflow-x:auto;padding:0 18px 8px;}
 .tab{
-  flex-shrink:0;
-
-  padding:5px 11px;
-
-  border-radius:var(--r3);
+  font-family:'DM Mono';
+  font-size:12px;                    /* increased from 11px */
+  padding:8px 14px;                  /* increased for touch */
+  border-radius:24px;
   border:1px solid var(--b1);
-
-  background:transparent;
   color:var(--t3);
-
-  font-size:11px;
-  font-family:'DM Mono',monospace;
-
+  background:transparent;
   cursor:pointer;
-  transition:all 0.15s;
+  transition:background 0.15s, color 0.15s;
   user-select:none;
 }
+.tab:active{background:var(--s2);}
+.tab.active{background:#fff;color:#000;}
+.tab.done{color:var(--green);border-color:rgba(61,220,132,0.25);}
 
-.tab.done{
-  color:var(--green);
-  border-color:rgba(61,220,132,0.25);
-}
-
-.tab.active{
-  background:var(--tx);
-  color:var(--bg);
-  border-color:transparent;
-  font-weight:500;
-}
-
-.tab.done.active{
-  background:var(--green);
-  color:#000;
-}
-
-/* SESSION TABS */
-
-.stabs{
-  flex-shrink:0;
-
-  display:flex;
-  gap:6px;
-
-  padding:0 18px 10px;
-}
-
+/* SESSION */
+.stabs{display:flex;gap:6px;padding:0 18px 10px;}
 .stab{
   flex:1;
-
-  padding:8px 4px;
-
-  border-radius:var(--r2);
+  font-size:12px;                    /* increased from 11px */
+  font-family:'DM Mono';
   border:1px solid var(--b1);
-
-  background:transparent;
-  color:var(--t3);
-
-  font-size:11px;
-  font-family:'DM Mono',monospace;
-
-  cursor:pointer;
-  transition:all 0.15s;
-
+  padding:10px 4px;                  /* increased */
+  border-radius:10px;
   text-align:center;
+  color:var(--t3);
+  cursor:pointer;
+  transition:background 0.15s, color 0.15s;
   user-select:none;
-  position:relative;
 }
+.stab:active{background:var(--s2);}
+.stab.active{background:var(--s2);color:#fff;}
 
-.stab.done{
-  color:var(--green);
-  border-color:rgba(61,220,132,0.3);
-}
+/* CONTENT */
+.scroll{flex:1;overflow-y:auto;padding:0 14px;}
 
-.stab.active{
-  background:var(--s2);
-  color:var(--tx);
-  border-color:var(--b2);
-}
-
-.stab.done.active{
-  background:var(--gd);
-  color:var(--green);
-  border-color:rgba(61,220,132,0.4);
-}
-
-.stab-dot{
-  width:5px;
-  height:5px;
-
-  border-radius:50%;
-  background:var(--green);
-
-  position:absolute;
-  top:5px;
-  right:5px;
-
-  display:none;
-}
-
-.stab.done .stab-dot{
-  display:block;
-}
-
-.stab.done.active .stab-dot{
-  display:none;
-}
-
-/* SCROLL */
-
-.scroll{
-  flex:1;
-  overflow-y:auto;
-
-  padding:0 14px 20px;
-  -webkit-overflow-scrolling:touch;
-}
-
-/* WEEK SUMMARY */
-
-.wsummary{
+.card{
   background:var(--s1);
   border:1px solid var(--b1);
-  border-radius:var(--r);
-
-  padding:14px 16px;
-  margin-bottom:12px;
-}
-
-.ws-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-
-  margin-bottom:12px;
-}
-
-.ws-title{
-  font-size:16px;
-  font-weight:600;
-  letter-spacing:-0.3px;
-}
-
-.ws-date{
-  font-size:11px;
-  color:var(--t2);
-  font-family:'DM Mono',monospace;
-
-  margin-top:3px;
-}
-
-.badge{
-  font-size:10px;
-  font-weight:500;
-
-  padding:3px 9px;
-
-  border-radius:var(--r3);
-  font-family:'DM Mono',monospace;
-}
-
-.b-done{
-  background:var(--gd);
-  color:var(--green);
-  border:1px solid rgba(61,220,132,0.3);
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-
-  gap:6px;
-  margin-bottom:10px;
-}
-
-.stat{
-  background:var(--s2);
-  border-radius:var(--r2);
-
-  padding:8px 6px;
-  text-align:center;
-}
-
-.stat-n{
-  font-size:17px;
-  font-weight:600;
-  font-family:'DM Mono',monospace;
-}
-
-.stat-n.g{
-  color:var(--green);
-}
-
-.stat-n.o{
-  color:var(--orange);
-}
-
-.stat-l{
-  font-size:9px;
-  color:var(--t2);
-
-  text-transform:uppercase;
-  letter-spacing:0.06em;
-
-  margin-top:1px;
-}
-
-.prog{
-  height:3px;
-  background:var(--s3);
-
-  border-radius:2px;
-  overflow:hidden;
-}
-
-.prog-fill{
-  height:100%;
-  background:var(--green);
-
-  border-radius:2px;
-  transition:width 0.5s cubic-bezier(0.4,0,0.2,1);
-}
-
-/* SESSION HEADER */
-
-.sh{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-
-  padding:4px 2px 8px;
-}
-
-.sh-title{
-  font-size:11px;
-  font-weight:600;
-  color:var(--t2);
-
-  text-transform:uppercase;
-  letter-spacing:0.08em;
-
-  font-family:'DM Mono',monospace;
-}
-
-.sh-prog{
-  font-size:11px;
-  color:var(--t3);
-  font-family:'DM Mono',monospace;
-}
-
-/* EXERCISE CARDS */
-
-.ex-card{
-  background:var(--s1);
-  border:1px solid var(--b1);
-
-  border-radius:var(--r);
+  border-radius:16px;
   margin-bottom:6px;
-
-  overflow:hidden;
 }
 
-.ex-row{
+.row{
   display:flex;
-  align-items:center;
-
+  justify-content:space-between;
   padding:12px 14px;
-  gap:11px;
 }
 
-.ex-body{
-  flex:1;
-}
+.name{font-size:14px;}
+.meta{font-size:11px;color:var(--t2);font-family:'DM Mono';}
 
-.ex-name{
-  font-size:14px;
-  font-weight:500;
-}
-
-.ex-sets{
-  font-size:11px;
-  color:var(--t2);
-
-  font-family:'DM Mono',monospace;
-  margin-top:3px;
-}
-
-.ex-right{
-  text-align:right;
-}
-
-.ex-wt{
-  display:flex;
-  align-items:baseline;
-  gap:2px;
-}
-
-.ex-wt-v{
-  font-size:15px;
+.wt{
+  font-family:'DM Mono';
   font-weight:600;
-  font-family:'DM Mono',monospace;
-}
-
-.ex-wt-u{
-  font-size:10px;
-  color:var(--t3);
-}
-
-/* NAV */
-
-.nav{
-  flex-shrink:0;
-
-  display:flex;
-  gap:8px;
-
-  padding:8px 14px 10px;
-
-  border-top:1px solid var(--b1);
-  background:var(--bg);
-}
-
-.nav-btn{
-  flex:1;
-
-  padding:13px 8px;
-
-  border:1px solid var(--b2);
-  border-radius:var(--r2);
-
-  background:transparent;
+  font-size:16px;
   color:var(--tx);
-
-  font-size:13px;
-  font-family:'DM Sans',sans-serif;
-
-  cursor:pointer;
 }
-
-.nav-c{
-  flex:2;
-
-  font-family:'DM Mono',monospace;
-  font-size:11px;
-  color:var(--t2);
-
-  border-color:transparent;
-  pointer-events:none;
-}
+.wt.missing{color:var(--t3); font-weight:400;}
 </style>
 </head>
 
@@ -490,213 +142,129 @@ body{
     <div class="title">Gym Plan</div>
     <div class="subtitle">May – Dec 2026</div>
   </div>
-
   <div class="chip" id="chip">— / 35<br>weeks</div>
 </div>
 
-<div class="tabs-wrap">
-  <div class="tabs" id="wtabs"></div>
-</div>
-
+<div class="tabs" id="wtabs"></div>
 <div class="stabs" id="stabs"></div>
 
 <div class="scroll">
   <div id="content"></div>
 </div>
 
-<div class="nav">
-  <button class="nav-btn" id="prev" onclick="changeWeek(-1)">← Prev</button>
-  <button class="nav-btn nav-c" id="nlabel"></button>
-  <button class="nav-btn" id="next" onclick="changeWeek(1)">Next →</button>
-</div>
-
 <script>
 
 const WEEKS=[
-  {n:1,d:'04 May'},
-  {n:2,d:'11 May'},
-  {n:3,d:'18 May'},
-  {n:4,d:'25 May'},
-  {n:5,d:'01 Jun'},
-  {n:6,d:'08 Jun'},
-  {n:7,d:'15 Jun'},
-  {n:8,d:'22 Jun'},
-  {n:9,d:'29 Jun'},
-  {n:10,d:'06 Jul'},
-  {n:11,d:'13 Jul'},
-  {n:12,d:'20 Jul'},
-  {n:13,d:'27 Jul'},
-  {n:14,d:'03 Aug'},
-  {n:15,d:'10 Aug'},
-  {n:16,d:'17 Aug'},
-  {n:17,d:'24 Aug'},
-  {n:18,d:'31 Aug'},
-  {n:19,d:'07 Sep'},
-  {n:20,d:'14 Sep'},
-  {n:21,d:'21 Sep'},
-  {n:22,d:'28 Sep'},
-  {n:23,d:'05 Oct'},
-  {n:24,d:'12 Oct'},
-  {n:25,d:'19 Oct'},
-  {n:26,d:'26 Oct'},
-  {n:27,d:'02 Nov'},
-  {n:28,d:'09 Nov'},
-  {n:29,d:'16 Nov'},
-  {n:30,d:'23 Nov'},
-  {n:31,d:'30 Nov'},
-  {n:32,d:'07 Dec'},
-  {n:33,d:'14 Dec'},
-  {n:34,d:'21 Dec'},
-  {n:35,d:'28 Dec'}
+  {n:1,d:'04 May'},{n:2,d:'11 May'},{n:3,d:'18 May'},{n:4,d:'25 May'},
+  {n:5,d:'01 Jun'},{n:6,d:'08 Jun'},{n:7,d:'15 Jun'},{n:8,d:'22 Jun'},
+  {n:9,d:'29 Jun'},{n:10,d:'06 Jul'},{n:11,d:'13 Jul'},{n:12,d:'20 Jul'},
+  {n:13,d:'27 Jul'},{n:14,d:'03 Aug'},{n:15,d:'10 Aug'},{n:16,d:'17 Aug'},
+  {n:17,d:'24 Aug'},{n:18,d:'31 Aug'},{n:19,d:'07 Sep'},{n:20,d:'14 Sep'},
+  {n:21,d:'21 Sep'},{n:22,d:'28 Sep'},{n:23,d:'05 Oct'},{n:24,d:'12 Oct'},
+  {n:25,d:'19 Oct'},{n:26,d:'26 Oct'},{n:27,d:'02 Nov'},{n:28,d:'09 Nov'},
+  {n:29,d:'16 Nov'},{n:30,d:'23 Nov'},{n:31,d:'30 Nov'},{n:32,d:'07 Dec'},
+  {n:33,d:'14 Dec'},{n:34,d:'21 Dec'},{n:35,d:'28 Dec'}
 ];
 
 const PUSH=[
-  {name:'Inc bench press',sets:'4×6-8',wt:'25'},
-  {name:'Flat bench press',sets:'4×6-8',wt:'27.5'},
-  {name:'Military press',sets:'3×6-8',wt:'32.5'},
-  {name:'Cable lateral raise',sets:'4×15-20',wt:'—'},
-  {name:'OH tricep ext',sets:'3×10-15',wt:'—'},
-  {name:'Tricep pushdown',sets:'3×10-15',wt:'—'},
-  {name:'Face pull',sets:'3×15-20',wt:'—'}
+  {name:'Incline bench',sets:'4×6-8',w:[25,25,25,25,27.5,27.5,27.5,27.5,27.5,30,30,30,30,30,30,32.5,32.5,32.5,32.5,32.5,32.5,35,35,35,35,35,35,35,37.5,37.5,37.5,37.5,37.5,37.5,40]},
+  {name:'Flat bench',sets:'4×6-8',w:[27.5,27.5,27.5,27.5,30,30,30,30,30,32.5,32.5,32.5,32.5,32.5,32.5,35,35,35,35,35,35,37.5,37.5,37.5,37.5,37.5,37.5,40,40,40,40,40,40,42.5]},
+  {name:'Military press',sets:'3×6-8',w:[32.5,32.5,32.5,32.5,35,35,35,35,37.5,37.5,37.5,37.5,40,40,40,40,42.5,42.5,42.5,42.5,45,45,45,45,47.5,47.5,47.5,47.5,50,50,50,50,52.5,52.5,55]},
 ];
 
 const PULL=[
-  {name:'Pull-ups',sets:'4×6-8',wt:'15'},
-  {name:'Seated row',sets:'4×6-8',wt:'—'},
-  {name:'One arm cable row',sets:'3×10-12',wt:'—'},
-  {name:'Rear delt fly',sets:'4×15-20',wt:'—'},
-  {name:'Cable lat raise',sets:'3×15-20',wt:'—'},
-  {name:'DB curl',sets:'3×8-12',wt:'—'},
-  {name:'Inc DB curls',sets:'2×10-15',wt:'—'}
+  {name:'Pull-ups',sets:'4×6-8',w:[15,15,15,15,17.5,17.5,17.5,17.5,20,20,20,20,22.5,22.5,22.5,22.5,25,25,25,25,27.5,27.5,27.5,27.5,30,30,30,30,32.5,32.5,32.5,32.5,35,35,35]},
+  {name:'Seated row',sets:'4×6-8',w:null},
+  {name:'DB curl',sets:'3×8-12',w:null},
 ];
 
 const SESSIONS=[
-  {id:'s1',label:'S1·Chest',long:'Session 1 · Chest',ex:PUSH},
-  {id:'s2',label:'S2·Back',long:'Session 2 · Back',ex:PULL},
-  {id:'s3',label:'S3·Chest',long:'Session 3 · Chest',ex:PUSH},
-  {id:'s4',label:'S4·Back',long:'Session 4 · Back',ex:PULL},
+  {id:'s1',label:'Chest',ex:PUSH},
+  {id:'s2',label:'Back',ex:PULL},
+  {id:'s3',label:'Chest',ex:PUSH},
+  {id:'s4',label:'Back',ex:PULL},
 ];
 
-let cur=0;
-let cs=0;
+// State: load from localStorage or start at week 0, session 0
+let cur = parseInt(localStorage.getItem('gym_cur') || '0');
+let cs = parseInt(localStorage.getItem('gym_cs') || '0');
 
-function renderTabs(){
+// Validate range
+if (cur < 0 || cur >= WEEKS.length) cur = 0;
+if (cs < 0 || cs >= SESSIONS.length) cs = 0;
 
-  const wtabs=document.getElementById('wtabs');
-
-  wtabs.innerHTML=WEEKS.map((w,i)=>`
-    <button class="tab ${i===cur?'active':''}" onclick="goWeek(${i})">
-      W${w.n}
-    </button>
-  `).join('');
-
-  document.getElementById('stabs').innerHTML=
-    SESSIONS.map((s,i)=>`
-      <button class="stab ${i===cs?'active':''}" onclick="goSess(${i})">
-        ${s.label}
-      </button>
-    `).join('');
+function saveState(){
+  localStorage.setItem('gym_cur', cur);
+  localStorage.setItem('gym_cs', cs);
 }
 
-function renderContent(){
+function renderTabs(){
+  document.getElementById('wtabs').innerHTML =
+    WEEKS.map((w,i)=>`<div class="tab ${i===cur?'active':''}">${w.n}</div>`).join('');
 
-  const week=WEEKS[cur];
-  const session=SESSIONS[cs];
-
-  const rows=session.ex.map(ex=>`
-    <div class="ex-card">
-
-      <div class="ex-row">
-
-        <div class="ex-body">
-          <div class="ex-name">${ex.name}</div>
-          <div class="ex-sets">${ex.sets}</div>
-        </div>
-
-        <div class="ex-right">
-
-          <div class="ex-wt">
-            <div class="ex-wt-v">${ex.wt}</div>
-
-            ${
-              ex.wt !== '—'
-              ?
-              '<div class="ex-wt-u">kg</div>'
-              :
-              ''
-            }
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-  `).join('');
-
-  document.getElementById('content').innerHTML=`
-
-    <div class="wsummary">
-
-      <div class="ws-top">
-
-        <div>
-
-          <div class="ws-title">
-            Week ${week.n}
-          </div>
-
-          <div class="ws-date">
-            w/c ${week.d} 2026
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <div class="sh">
-      <div class="sh-title">${session.long}</div>
-    </div>
-
-    ${rows}
-
-  `;
-
-  document.getElementById('chip').innerHTML=
-    `<em>${cur+1}</em> / 35<br>weeks`;
-
-  document.getElementById('nlabel').textContent=
-    `Week ${cur+1} of 35`;
+  document.getElementById('stabs').innerHTML =
+    SESSIONS.map((s,i)=>`<div class="stab ${i===cs?'active':''}">${s.label}</div>`).join('');
 }
 
 function render(){
   renderTabs();
-  renderContent();
+
+  const s = SESSIONS[cs];
+
+  document.getElementById('content').innerHTML =
+    s.ex.map(e => {
+      let weightHTML = '';
+      if (e.w && e.w[cur] !== undefined) {
+        weightHTML = `${e.w[cur]} kg`;
+      } else {
+        weightHTML = '—';
+      }
+      // Add a class when missing to style differently
+      const wtClass = (e.w && e.w[cur] !== undefined) ? 'wt' : 'wt missing';
+      return `
+        <div class="card">
+          <div class="row">
+            <div>
+              <div class="name">${e.name}</div>
+              <div class="meta">${e.sets}</div>
+            </div>
+            <div class="${wtClass}">${weightHTML}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+  document.getElementById('chip').innerHTML =
+    `<em>${cur+1}</em> / 35<br>weeks`;
 }
 
-function goWeek(i){
-  cur=i;
-  render();
-}
+// Event delegation for week tabs
+document.getElementById('wtabs').addEventListener('click', (e) => {
+  const tab = e.target.closest('.tab');
+  if (!tab) return;
+  const children = [...e.currentTarget.children];
+  const idx = children.indexOf(tab);
+  if (idx >= 0 && idx !== cur) {
+    cur = idx;
+    saveState();
+    render();
+  }
+});
 
-function goSess(i){
-  cs=i;
-  render();
-}
+// Event delegation for session tabs
+document.getElementById('stabs').addEventListener('click', (e) => {
+  const stab = e.target.closest('.stab');
+  if (!stab) return;
+  const children = [...e.currentTarget.children];
+  const idx = children.indexOf(stab);
+  if (idx >= 0 && idx !== cs) {
+    cs = idx;
+    saveState();
+    render();
+  }
+});
 
-function changeWeek(d){
-
-  cur+=d;
-
-  if(cur<0) cur=0;
-  if(cur>=WEEKS.length) cur=WEEKS.length-1;
-
-  render();
-}
-
+// Initial render
 render();
 
 </script>
